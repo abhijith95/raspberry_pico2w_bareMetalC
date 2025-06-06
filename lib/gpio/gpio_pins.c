@@ -2,7 +2,8 @@
 #include "gpio_pins.h"
 
 /* Global variables */
-gpio_pin *gpio_pin_ctrls= GPIO_PIN_CTRL;
+GPIO_PIN_CTRLS *gpio_ctrls = GPIO_PIN_CTRL;
+GPIO_PADS *gpio_pads_regs = GPIO_PADS_REG;
 
 /**
  * @brief Function to read the GPIO value
@@ -17,13 +18,13 @@ gpio_pin *gpio_pin_ctrls= GPIO_PIN_CTRL;
 uint8_t Read_gpio(uint8_t pin)
 {
     uint8_t reg_value = (uint8_t)0;
-    if (pin < (uint32_t) 32)
+    if (pin < LOW_REG_MAX_PINS)
     {
         reg_value = ((uint8_t) (*(GPIO_IN) & (uint32_t)(1<<pin)));
     }
     else
     {
-        reg_value = ((uint8_t) (*(GPIO_HI_IN) & (uint32_t)(1<<pin)));
+        reg_value = ((uint8_t) (*(GPIO_HI_IN) & (uint32_t)(1<<(pin - LOW_REG_MAX_PINS))));
     }
     return reg_value;
 }
@@ -36,13 +37,13 @@ uint8_t Read_gpio(uint8_t pin)
  */
 void Write_gpio(uint8_t pin, uint8_t pin_value)
 {
-    if (pin < (uint32_t) 32)
+    if (pin < LOW_REG_MAX_PINS)
     {
-        *(GPIO_OUT) = ((*GPIO_OUT) | (uint32_t)(pin_value << pin));
+        *(GPIO_OUT_SET) = (pin_value << pin);
     }
     else
     {
-        *(GPIO_HI_OUT) = ((*GPIO_HI_OUT) | (uint32_t)(pin_value << pin));
+        *(GPIO_HI_OUT_SET) = (pin_value << (pin - LOW_REG_MAX_PINS));
     }
 }
 
@@ -55,9 +56,9 @@ void Write_gpio(uint8_t pin, uint8_t pin_value)
 void Config_gpio_pin(uint8_t pin, GPIO_FUNCTIONS_E pin_function)
 {
     /* Check if pin is out of range */
-    if((pin > 0) && (pin <= NUM_GPIO))
+    if((pin >= 0) && (pin <= NUM_GPIO_PICO2W))
     {
-        gpio_pin_ctrls[pin].gpio_ctrl = gpio_pin_ctrls[pin].gpio_ctrl | ((uint8_t) pin_function);
+        gpio_ctrls[pin].gpio_ctrl = (((uint32_t) pin_function) << 0);
     }
     else
     {
@@ -73,12 +74,13 @@ void Config_gpio_pin(uint8_t pin, GPIO_FUNCTIONS_E pin_function)
  */
 void Config_gpio_sio(uint8_t pin, GPIO_SIO_TYPE_E sio_type)
 {
-    if (pin < (uint32_t) 32)
+    gpio_pads_regs->gpio_pins[pin] = 0;
+    if (pin < LOW_REG_MAX_PINS)
     {
-        *(GPIO_OE) = ((*GPIO_OE) | ((uint32_t)sio_type << pin));
+        *(GPIO_OE_SET) = ((uint32_t)sio_type << pin);
     }
     else
     {
-        *(GPIO_HI_OE) = ((*GPIO_HI_OE) | ((uint32_t)sio_type << pin));
+        *(GPIO_HI_OE_SET) = ((uint32_t)sio_type << (pin - LOW_REG_MAX_PINS));
     }
 }

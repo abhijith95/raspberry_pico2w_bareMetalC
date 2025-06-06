@@ -31,37 +31,38 @@ void blinkLed_10ms()
     static LED_STATES led_states = LED_OFF;
     static uint16_t timer = (uint16_t)0;
 
-    switch(led_states)
-    {
-        case LED_OFF:
-            Write_gpio(LED_GPIO, PIN_LOW);
-            timer += TICK_UPDATE;
-            if(timer >= LED_OFF_MS)
-            {
-                led_states = LED_ON;
-                timer = (uint16_t)0;
-            }
-            else
-            {
-                /* Stay in the current state */
-            }
-            break;
-        case LED_ON:
-            Write_gpio(LED_GPIO, PIN_HIGH);
-            timer += TICK_UPDATE;
-            if(timer >= LED_OFF_MS)
-            {
-                led_states = LED_OFF;
-                timer = (uint16_t)0;
-            }
-            else
-            {
-                /* Stay in the current state */
-            }
-            break;
-        default:
-            led_states = LED_OFF;
-            timer = (uint16_t)0;
-            break;
-    }
+    // switch(led_states)
+    // {
+    //     case LED_OFF:
+    //         Write_gpio(LED_GPIO, PIN_LOW);
+    //         timer += TICK_UPDATE;
+    //         if(timer >= LED_OFF_MS)
+    //         {
+    //             led_states = LED_ON;
+    //             timer = (uint16_t)0;
+    //         }
+    //         else
+    //         {
+    //             /* Stay in the current state */
+    //         }
+    //         break;
+    //     case LED_ON:
+    //         Write_gpio(LED_GPIO, PIN_HIGH);
+    //         timer += TICK_UPDATE;
+    //         if(timer >= LED_OFF_MS)
+    //         {
+    //             led_states = LED_OFF;
+    //             timer = (uint16_t)0;
+    //         }
+    //         else
+    //         {
+    //             /* Stay in the current state */
+    //         }
+    //         break;
+    //     default:
+    //         led_states = LED_OFF;
+    //         timer = (uint16_t)0;
+    //         break;
+    // }
+    Write_gpio(LED_GPIO, PIN_HIGH);
 }

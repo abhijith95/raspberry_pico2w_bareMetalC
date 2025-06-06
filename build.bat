@@ -11,6 +11,6 @@ if [%~1] == [] (
     exit /b 1
 )
 
-cmake -S . -B build/ -DAPPL_TO_BUILD=%~1 -G "Ninja"
+cmake -S . -B build/ -DAPPL_TO_BUILD=%~1 -G "Ninja" -DCMAKE_BUILD_TYPE=Debug
 
 cmake --build build/

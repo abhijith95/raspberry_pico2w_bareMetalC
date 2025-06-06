@@ -24,6 +24,8 @@ if (EXISTS ${picoVscode})
 endif()
 # ====================================================================================
 set(PICO_BOARD pico2_w CACHE STRING "Board type")
+SET(PICO_DISASM_OBJDUMP_ARGS "-Sg")
+set(CMAKE_BUILD_TYPE Debug)
 
 # Pull in Raspberry Pi Pico SDK (must be before project)
 include(pico_sdk_import.cmake)

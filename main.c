@@ -1,9 +1,6 @@
 #include <stdint.h>
 #include "timer.h"
-
-#ifdef APPL_BLINKLED
 #include "blinkLed.h"
-#endif
 
 /**
  * @brief Function to setup the clock source for the application
@@ -62,20 +59,18 @@ void clock_tick_setup()
 void setup()
 {
     /* Main setup for the board */
-    clock_src_setup();
-    clock_gen_setup();
-    clock_tick_setup();
+    // clock_src_setup();
+    // clock_gen_setup();
+    // clock_tick_setup();
 
-    #ifdef APPL_BLINKLED
     blinkLed_setup();
-    #endif
 }
 
 /**
  * @brief Main function
  * 
  */
-void main()
+int main()
 {
     static uint16_t time_us;
     tick_gen_info *timer0 = TCK_GEN_TIMER0_INFO;
@@ -84,26 +79,27 @@ void main()
 
     while(1)
     {
-        if(timer0->count == (uint32_t)0)
-        {
-            time_us += (uint16_t)1;
-        }
-        else
-        {
-            /* Do not update the timer */
-        }
+        blinkLed_10ms();
+        // if(timer0->count == (uint32_t)0)
+        // {
+        //     time_us += (uint16_t)1;
+        // }
+        // else
+        // {
+        //     /* Do not update the timer */
+        // }
 
-        if(time_us == APPL_CYCLE_TIME_US)
-        {
-            /* Call the application main function */
-            #ifdef APPL_BLINKLED
-            blinkLed_10ms();
-            #endif
-        }
-        else
-        {
-            /* Wait for 10ms time */
-        }
+        // if(time_us == APPL_CYCLE_TIME_US)
+        // {
+        //     /* Call the application main function */
+        //     // #ifdef APPL_BLINKLED
+        //     blinkLed_10ms();
+        //     // #endif
+        // }
+        // else
+        // {
+        //     /* Wait for 10ms time */
+        // }
 
     }
 }

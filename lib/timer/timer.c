@@ -34,7 +34,6 @@ void Configure_clock_source(CLOCK_SOURCES clk_src, clock_source_info *info)
     temp->ctrl = info->ctrl;
     temp->dormant = info->dormant;
     temp->startup = info->startup;
-    temp->status = info->status;
 
     /* Check if the clock source has been enabled or disabled */
     while((CLK_SRC_READ_STATUS(temp->status) == 0) &&
@@ -82,7 +81,10 @@ void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
     }
     temp->ctrl = info->ctrl;
     temp->div = info->div;
-    temp->sel = info->sel;
+    while(((temp->sel & 0x7) >> 3) != ((temp->ctrl & 0x3) >> 2))
+    {
+        /* Wait for the source to switch */
+    }
 }
 
 /**
@@ -115,12 +117,11 @@ void Configure_tick_genrtrs(TICK_GENERATORS tick_gen, tick_gen_info *info)
             break;
     }
     temp->ctrl = info->ctrl;
-    temp->count = info->count;
     temp->cycles = info->cycles;
 
-    if((temp->ctrl & 0x00000001) == CLK_TICK_ENABLE)
+    if(((temp->ctrl & 0x1) >> 1) == CLK_TICK_ENABLE)
     {
-        while((temp->ctrl & 0x00000002) == CLK_TICK_GEN_STPD)
+        while(((temp->ctrl & 0x2) >> 2) != CLK_TICK_GEN_RUNG)
         {
             /* Wait until the tick generator is running */
         }

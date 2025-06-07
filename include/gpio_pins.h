@@ -11,6 +11,8 @@
 #define GPIO_HI_OUT             ((volatile uint32_t*)  (SIO_BASE + 0x014))
 #define GPIO_OUT_SET            ((volatile uint32_t*)  (SIO_BASE + 0x018))
 #define GPIO_HI_OUT_SET         ((volatile uint32_t*)  (SIO_BASE + 0x01C))
+#define GPIO_OUT_CLR            ((volatile uint32_t*)  (SIO_BASE + 0x020))
+#define GPIO_HI_OUT_CLR         ((volatile uint32_t*)  (SIO_BASE + 0x024))
 #define GPIO_OE                 ((volatile uint32_t*)  (SIO_BASE + 0x030))
 #define GPIO_HI_OE              ((volatile uint32_t*)  (SIO_BASE + 0x034))
 #define GPIO_OE_SET             ((volatile uint32_t*)  (SIO_BASE + 0x038))
@@ -73,9 +75,15 @@ typedef enum
     OUTPUT_CURR_12MA
 } GPIO_DRIVE_STGTH;
 
+typedef enum
+{
+    OUTPUT_LOW = 0,
+    OUTPUT_HIGH
+}GPIO_SIO_OUTPUT_LEVEL;
+
 /* Function prototypes */
 uint8_t Read_gpio(uint8_t pin);
-void Write_gpio(uint8_t pin, uint8_t pin_value);
+void Write_gpio(uint8_t pin, GPIO_SIO_OUTPUT_LEVEL pin_value);
 void Config_gpio_pin(uint8_t pin, GPIO_FUNCTIONS_E pin_function);
 void Config_gpio_sio(uint8_t pin, GPIO_SIO_TYPE_E sio_type);
 

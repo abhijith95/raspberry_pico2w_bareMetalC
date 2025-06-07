@@ -3,25 +3,33 @@
 
 /* Page 554 for the chosen value */
 #define XOSC_STARTUP_DELAY  (uint32_t) 47
-#define CLK_SRC_READ_STATUS(x)  (x & (1<<31))
+#define CLK_SRC_READ_STATUS(x)  ((x & (1<<CLK_SRC_RUN_STATUS_BIT_POS)) >> CLK_SRC_RUN_STATUS_BIT_POS)
 #define CLK_SRC_ENABLE      0xFAB
 #define CLK_SRC_DISABLE     0xD1E
-#define CLK_SRC_READ_ENABLE(x)  (x & 0x00FFF000)
-#define CLK_SRC_WRITE_ENABLE        0xFFFABFFF
-#define CLK_SRC_WRITE_DISABLE       0xFFD1EFFF
+#define CLK_SRC_READ_ENABLE(x)  ((x & 0x00FFF000) >> CLK_SRC_ENABLE_BIT_POS)
+#define CLK_SRC_WRITE_ENABLE        0xFAB
+#define CLK_SRC_WRITE_DISABLE       0xD1E
+#define CLK_SRC_ENABLE_BIT_POS      12u
+#define CLK_SRC_RUN_STATUS_BIT_POS  31u
+#define CLK_SRC_AWAKE               0x77616B65
+#define CLK_SRC_DORMANT             0x636F6D61
 #define CLK_REF_XOSC_SRC        0x2
+#define CLK_REF_ROSC_SRC        0x0
 #define CLK_TICK_ENABLE         0x1
 #define CLK_TICK_GEN_STPD       0x0
 #define CLK_TICK_GEN_RUNG       0x1
 #define CLK_TICK_CYCLES_1uS     ((uint32_t) 12)
-#define CONV_US_MS              ((uint16_t) 1000)
-#define APPL_CYCLE_TIME_US      ((uint16_t) 10) * CONV_US_MS
+#define CLK_TICK_GET_COUNT(x)   ((x & 0xFF) >> 8)
+#define CONV_US_MS              ((uint32_t) 1000)
+#define APPL_CYCLE_TIME_US      ((uint32_t) 10) * CONV_US_MS
 
 /* Registers */
-#define CLK_GEN_REF_INFO            ((clock_gen_info*) (0x40010030))
+#define CLK_BASE                    0x40010000
+#define TICK_BASE                   0x40108000
+#define CLK_GEN_REF_INFO            ((clock_gen_info*) (CLK_BASE + 0x030))
 #define CLK_SRC_XOSC_INFO           ((clock_source_info*) (0x40048000))
-#define TCK_GEN_TIMER0_INFO         ((tick_gen_info*) (0x40108018))
-#define TCK_GEN_TIMER1_INFO         ((tick_gen_info*) (0x40108024))
+#define TCK_GEN_TIMER0_INFO         ((tick_gen_info*) (TICK_BASE + 0x018))
+#define TCK_GEN_TIMER1_INFO         ((tick_gen_info*) (TICK_BASE + 0x024))
 
 /* Enumeration for clock sources */
 typedef enum

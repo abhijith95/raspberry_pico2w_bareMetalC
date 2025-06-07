@@ -35,15 +35,29 @@ uint8_t Read_gpio(uint8_t pin)
  * @param pin - GPIO pin to set high or low
  * @param pin_value - Value should be 0 or 1
  */
-void Write_gpio(uint8_t pin, uint8_t pin_value)
+void Write_gpio(uint8_t pin, GPIO_SIO_OUTPUT_LEVEL pin_value)
 {
-    if (pin < LOW_REG_MAX_PINS)
+    if (pin_value == OUTPUT_HIGH)
     {
-        *(GPIO_OUT_SET) = (pin_value << pin);
+        if (pin < LOW_REG_MAX_PINS)
+        {
+            *(GPIO_OUT_SET) = (1 << pin);
+        }
+        else
+        {
+            *(GPIO_HI_OUT_SET) = (1 << (pin - LOW_REG_MAX_PINS));
+        }
     }
     else
     {
-        *(GPIO_HI_OUT_SET) = (pin_value << (pin - LOW_REG_MAX_PINS));
+        if (pin < LOW_REG_MAX_PINS)
+        {
+            *(GPIO_OUT_CLR) = (1 << pin);
+        }
+        else
+        {
+            *(GPIO_HI_OUT_CLR) = (1 << (pin - LOW_REG_MAX_PINS));
+        }
     }
 }
 

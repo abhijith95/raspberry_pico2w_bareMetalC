@@ -3,8 +3,8 @@
 #include "blinkLed.h"
 
 /* Variable definitions */
-#define LED_OFF_MS      (uint16_t)1000
-#define LED_ON_MS       (uint16_t)1000
+#define LED_OFF_MS      (uint32_t)1000
+#define LED_ON_MS       (uint32_t)1000
 #define LED_GPIO        (uint8_t)0
 #define PIN_HIGH        (uint8_t)1 
 #define PIN_LOW         (uint8_t)0
@@ -29,40 +29,40 @@ void blinkLed_setup()
 void blinkLed_10ms()
 {
     static LED_STATES led_states = LED_OFF;
-    static uint16_t timer = (uint16_t)0;
+    static uint32_t timer = (uint32_t)0;
 
-    // switch(led_states)
-    // {
-    //     case LED_OFF:
-    //         Write_gpio(LED_GPIO, PIN_LOW);
-    //         timer += TICK_UPDATE;
-    //         if(timer >= LED_OFF_MS)
-    //         {
-    //             led_states = LED_ON;
-    //             timer = (uint16_t)0;
-    //         }
-    //         else
-    //         {
-    //             /* Stay in the current state */
-    //         }
-    //         break;
-    //     case LED_ON:
-    //         Write_gpio(LED_GPIO, PIN_HIGH);
-    //         timer += TICK_UPDATE;
-    //         if(timer >= LED_OFF_MS)
-    //         {
-    //             led_states = LED_OFF;
-    //             timer = (uint16_t)0;
-    //         }
-    //         else
-    //         {
-    //             /* Stay in the current state */
-    //         }
-    //         break;
-    //     default:
-    //         led_states = LED_OFF;
-    //         timer = (uint16_t)0;
-    //         break;
-    // }
-    Write_gpio(LED_GPIO, PIN_HIGH);
+    switch(led_states)
+    {
+        case LED_OFF:
+            Write_gpio(LED_GPIO, OUTPUT_LOW);
+            timer += TICK_UPDATE;
+            if(timer >= LED_OFF_MS)
+            {
+                led_states = LED_ON;
+                timer = (uint32_t)0;
+            }
+            else
+            {
+                /* Stay in the current state */
+            }
+            break;
+        case LED_ON:
+            Write_gpio(LED_GPIO, OUTPUT_HIGH);
+            timer += TICK_UPDATE;
+            if(timer >= LED_OFF_MS)
+            {
+                led_states = LED_OFF;
+                timer = (uint32_t)0;
+            }
+            else
+            {
+                /* Stay in the current state */
+            }
+            break;
+        default:
+            led_states = LED_OFF;
+            timer = (uint32_t)0;
+            break;
+    }
 }
+

@@ -52,6 +52,8 @@ void Configure_clock_source(CLOCK_SOURCES clk_src, clock_source_info *info)
 void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
 {
     clock_gen_info *temp;
+    uint8_t sel_bits;
+    uint8_t ctrl_bits;
     switch(clk_gen)
     {
         case GPIO0_GEN:
@@ -64,8 +66,13 @@ void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
             break;
         case REF:
             temp = CLK_GEN_REF_INFO;
+            sel_bits = 7u;
+            ctrl_bits = 3u;
             break;
         case SYS:
+            temp = CLK_GEN_SYS_INFO;
+            sel_bits = 1u;
+            ctrl_bits = 1u;
             break;
         case PERI:
             break;
@@ -81,10 +88,10 @@ void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
     }
     temp->ctrl = info->ctrl;
     temp->div = info->div;
-    while(((temp->sel & 0x7) >> 3) != ((temp->ctrl & 0x3) >> 2))
-    {
-        /* Wait for the source to switch */
-    }
+    // while((temp->sel & sel_bits) != (temp->ctrl & ctrl_bits))
+    // {
+    //     /* Wait for the source to switch */
+    // }
 }
 
 /**
@@ -116,8 +123,11 @@ void Configure_tick_genrtrs(TICK_GENERATORS tick_gen, tick_gen_info *info)
             temp = TCK_GEN_TIMER0_INFO;
             break;
     }
-    temp->ctrl = info->ctrl;
+    /* Disable the tick generator while configuring the cycles*/
+    temp->ctrl = CLK_TICK_DISABLE;
     temp->cycles = info->cycles;
+    /* Write the original ctrl value */
+    temp->ctrl = info->ctrl;
 
     if(((temp->ctrl & 0x1) >> 1) == CLK_TICK_ENABLE)
     {
@@ -130,4 +140,43 @@ void Configure_tick_genrtrs(TICK_GENERATORS tick_gen, tick_gen_info *info)
     {
         /* Do nothing */
     }
+}
+
+/**
+ * @brief Function to reset the system timer registers to zero
+ * 
+ * @param timer_info - Struct pointing to the system timer registers
+ */
+void Reset_sys_timer(sys_timer_info* timer_info)
+{
+    /* Write to the low reigster first */
+    timer_info->timelw = RESET_TIMER;
+    timer_info->timehw = RESET_TIMER;
+}
+
+/**
+ * @brief Function to read the system timer
+ * 
+ * @param timer - Struct pointing to the system timer registers
+ * @param sys_time - Variable containing the final value of the system time
+ */
+void Read_sys_timer(sys_timer_info* timer, uint64_t* sys_time)
+{
+    *sys_time = (((uint64_t) timer->timehr) << 32u) | timer->timelr;
+}
+
+
+void Disable_ROSC()
+{
+    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = (CLK_SRC_WRITE_DISABLE << CLK_SRC_ENABLE_BIT_POS);
+    volatile uint32_t* temp = ((volatile uint32_t*)(CLK_SRC_ROSC_INFO + 0x1C));
+    while ((*temp & (1 << 31)) != 0);
+}
+
+
+void Enable_ROSC()
+{
+    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = (CLK_SRC_WRITE_ENABLE << CLK_SRC_ENABLE_BIT_POS);
+    volatile uint32_t* temp = ((volatile uint32_t*)(CLK_SRC_ROSC_INFO + 0x1C));
+    while ((*temp & (1 << 31)) != 1);
 }

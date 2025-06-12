@@ -15,9 +15,12 @@
 #define CLK_SRC_DORMANT             0x636F6D61
 #define CLK_REF_XOSC_SRC        0x2
 #define CLK_REF_ROSC_SRC        0x0
+#define CLK_SYS_REF_SRC         0x0
 #define CLK_TICK_ENABLE         0x1
+#define CLK_TICK_DISABLE        0x0
 #define CLK_TICK_GEN_STPD       0x0
 #define CLK_TICK_GEN_RUNG       0x1
+#define RESET_TIMER             (uint32_t)0
 #define CLK_TICK_CYCLES_1uS     ((uint32_t) 12)
 #define CLK_TICK_GET_COUNT(x)   ((x & 0xFF) >> 8)
 #define CONV_US_MS              ((uint32_t) 1000)
@@ -26,10 +29,22 @@
 /* Registers */
 #define CLK_BASE                    0x40010000
 #define TICK_BASE                   0x40108000
+#define TIMER0_BASE                 0x400B0000
+#define TIMER1_BASE                 0x400B8000
+#define RESETS_BASE                 0x40020000
 #define CLK_GEN_REF_INFO            ((clock_gen_info*) (CLK_BASE + 0x030))
+#define CLK_GEN_SYS_INFO            ((clock_gen_info*) (CLK_BASE + 0x03C))
 #define CLK_SRC_XOSC_INFO           ((clock_source_info*) (0x40048000))
+#define CLK_SRC_ROSC_INFO           0x400E8000
 #define TCK_GEN_TIMER0_INFO         ((tick_gen_info*) (TICK_BASE + 0x018))
 #define TCK_GEN_TIMER1_INFO         ((tick_gen_info*) (TICK_BASE + 0x024))
+#define TIMER0_SYS_TIMER            ((sys_timer_info*) (TIMER0_BASE))
+#define TIMER1_SYS_TIMER            ((sys_timer_info*) (TIMER1_BASE))
+#define TIMER0_RAW_LOW              ((volatile uint32_t*) (TIMER0_BASE + 0x24))
+#define TIMER0_LOCKED               ((volatile uint32_t*) (TIMER0_BASE + 0x34))
+#define TIMER0_SRC                  ((volatile uint32_t*) (TIMER0_BASE + 0x38))
+#define RESETS_RESET                ((volatile uint32_t*) (RESETS_BASE))
+#define RESETS_DONE                 ((volatile uint32_t*) (RESETS_BASE + 0x08))
 
 /* Enumeration for clock sources */
 typedef enum
@@ -94,10 +109,21 @@ typedef struct
     uint32_t count;
 }tick_gen_info;
 
+typedef struct 
+{
+    volatile uint32_t timehw;
+    volatile uint32_t timelw;
+    volatile uint32_t timehr;
+    volatile uint32_t timelr;
+}sys_timer_info;
 
 /* Function prototypes */
 void Configure_clock_source(CLOCK_SOURCES clk_src, clock_source_info *info);
 void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info);
 void Configure_tick_genrtrs(TICK_GENERATORS tick_gen, tick_gen_info *info);
+void Reset_sys_timer(sys_timer_info* timer_info);
+void Read_sys_timer(sys_timer_info* timer, uint64_t* sys_time);
+void Disable_ROSC();
+void Enable_ROSC();
 
 #endif

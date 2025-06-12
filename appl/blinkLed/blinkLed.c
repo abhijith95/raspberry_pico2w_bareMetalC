@@ -3,8 +3,8 @@
 #include "blinkLed.h"
 
 /* Variable definitions */
-#define LED_OFF_MS      (uint32_t)1000
-#define LED_ON_MS       (uint32_t)1000
+#define LED_OFF_MS      (uint32_t)300
+#define LED_ON_MS       (uint32_t)300
 #define LED_GPIO        (uint8_t)0
 #define PIN_HIGH        (uint8_t)1 
 #define PIN_LOW         (uint8_t)0
@@ -49,7 +49,7 @@ void blinkLed_10ms()
         case LED_ON:
             Write_gpio(LED_GPIO, OUTPUT_HIGH);
             timer += TICK_UPDATE;
-            if(timer >= LED_OFF_MS)
+            if(timer >= LED_ON_MS)
             {
                 led_states = LED_OFF;
                 timer = (uint32_t)0;

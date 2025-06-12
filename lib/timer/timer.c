@@ -66,13 +66,13 @@ void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
             break;
         case REF:
             temp = CLK_GEN_REF_INFO;
-            sel_bits = 7u;
-            ctrl_bits = 3u;
+            sel_bits = 0xF;
+            ctrl_bits = 0x3;
             break;
         case SYS:
             temp = CLK_GEN_SYS_INFO;
-            sel_bits = 1u;
-            ctrl_bits = 1u;
+            sel_bits = 0x3;
+            ctrl_bits = 0x1;
             break;
         case PERI:
             break;
@@ -83,15 +83,16 @@ void Configure_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
         case ADC:
             break;
         default:
-            temp = CLK_GEN_REF_INFO;
             break;
     }
     temp->ctrl = info->ctrl;
-    temp->div = info->div;
-    // while((temp->sel & sel_bits) != (temp->ctrl & ctrl_bits))
-    // {
-    //     /* Wait for the source to switch */
-    // }
+    // temp->div = info->div;
+    while (((temp->sel & sel_bits) & 
+            (1 << (temp->ctrl & ctrl_bits))) != (1 << (temp->ctrl & ctrl_bits)))
+    {
+        /* Wait for the source to switch. The selected register will turn on the Nth bit to 1.
+        This Nth bit is the enumerated value of the source, which is in the ctrl register*/
+    }
 }
 
 /**
@@ -165,18 +166,24 @@ void Read_sys_timer(sys_timer_info* timer, uint64_t* sys_time)
     *sys_time = (((uint64_t) timer->timehr) << 32u) | timer->timelr;
 }
 
-
+/**
+ * @brief Function to disable the ROSC clock source
+ * 
+ */
 void Disable_ROSC()
 {
-    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = (CLK_SRC_WRITE_DISABLE << CLK_SRC_ENABLE_BIT_POS);
     volatile uint32_t* temp = ((volatile uint32_t*)(CLK_SRC_ROSC_INFO + 0x1C));
+    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = 0 | (CLK_SRC_WRITE_DISABLE << CLK_SRC_ENABLE_BIT_POS);
     while ((*temp & (1 << 31)) != 0);
 }
 
-
+/**
+ * @brief Function toe enable the ROSC clock source
+ * 
+ */
 void Enable_ROSC()
 {
-    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = (CLK_SRC_WRITE_ENABLE << CLK_SRC_ENABLE_BIT_POS);
     volatile uint32_t* temp = ((volatile uint32_t*)(CLK_SRC_ROSC_INFO + 0x1C));
+    *((volatile uint32_t*)(CLK_SRC_ROSC_INFO)) = (CLK_SRC_WRITE_ENABLE << CLK_SRC_ENABLE_BIT_POS);
     while ((*temp & (1 << 31)) != 1);
 }

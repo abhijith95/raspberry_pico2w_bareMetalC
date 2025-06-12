@@ -23,10 +23,6 @@ void clock_src_setup()
     Configure_clock_source(XOSC, &info);
     /* Disable ROSC source */
     Disable_ROSC();
-    // info.ctrl = 0;
-    // info.ctrl =(CLK_SRC_WRITE_DISABLE << CLK_SRC_ENABLE_BIT_POS);
-    // info.dormant = CLK_SRC_DORMANT;
-    // Configure_clock_source(ROSC, &info);
 }
 
 /**
@@ -40,7 +36,6 @@ void clock_gen_setup()
 {
     clock_gen_info temp;
     temp.ctrl = CLK_REF_XOSC_SRC;  /* Set XOSC as the clock source */
-    temp.div = 0;
     Configure_clock_genrtrs(REF, &temp);
     /* Set the system clock generator to reference clock generator */
     temp.ctrl = CLK_SYS_REF_SRC;
@@ -56,7 +51,6 @@ void clock_tick_setup()
     tick_gen_info info;
     info.ctrl = CLK_TICK_ENABLE;
     info.cycles = CLK_TICK_CYCLES_1uS;
-    // info.cycles = 0;
     Configure_tick_genrtrs(TIMER0, &info);
 }
 
@@ -67,16 +61,12 @@ void clock_tick_setup()
 void setup()
 {
     /* Main setup for the board */
-    // clock_src_setup();
-    // clock_gen_setup();
-    // clock_tick_setup();
-
+    clock_src_setup();
+    clock_gen_setup();
+    clock_tick_setup();
+    
     /* Application setup */
     blinkLed_setup();
-    // *RESETS_RESET |= (0 << 23);
-    // *RESETS_RESET |= (0 << 24);
-    // while(((((*RESETS_DONE & (1 << 23)) >> 23) == 0) && 
-    //         (((*RESETS_DONE & (1 << 24)) >> 24) == 0)));
 }
 
 /**

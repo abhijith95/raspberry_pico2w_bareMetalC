@@ -3,8 +3,8 @@
 #include "blinkLed.h"
 
 /* Variable definitions */
-#define LED_OFF_MS      (uint32_t)300
-#define LED_ON_MS       (uint32_t)300
+#define LED_OFF_MS      (uint32_t)2000
+#define LED_ON_MS       (uint32_t)2000
 #define LED_GPIO        (uint8_t)0
 #define PIN_HIGH        (uint8_t)1 
 #define PIN_LOW         (uint8_t)0
@@ -28,7 +28,7 @@ void blinkLed_setup()
 
 void blinkLed_10ms()
 {
-    static LED_STATES led_states = LED_OFF;
+    static LED_STATES led_states = LED_ON;
     static uint32_t timer = (uint32_t)0;
 
     switch(led_states)

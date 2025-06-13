@@ -44,6 +44,43 @@ void Configure_clock_source(CLOCK_SOURCES clk_src, clock_source_info *info)
 }
 
 /**
+ * @brief Function to read the clock generator configuration
+ * 
+ * @param clk_gen - Enum indicating the clock generator 
+ * @param info - Pointer to struct containing the config info
+ */
+void Read_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info)
+{
+    switch(clk_gen)
+    {
+        case GPIO0_GEN:
+            break;
+        case GPIO1_GEN:
+            break;
+        case GPIO2_GEN:
+            break;
+        case GPIO3_GEN:
+            break;
+        case REF:
+            info = CLK_GEN_REF_INFO;
+            break;
+        case SYS:
+            info = CLK_GEN_SYS_INFO;
+            break;
+        case PERI:
+            break;
+        case HSTX:
+            break;
+        case USB:
+            break;
+        case ADC:
+            break;
+        default:
+            break;
+    }
+}
+
+/**
  * @brief Function to configure a clock generator
  * 
  * @param clk_gen - Enum indicating the clock generator 

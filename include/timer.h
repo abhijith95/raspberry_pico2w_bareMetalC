@@ -125,5 +125,6 @@ void Reset_sys_timer(sys_timer_info* timer_info);
 void Read_sys_timer(sys_timer_info* timer, uint64_t* sys_time);
 void Disable_ROSC();
 void Enable_ROSC();
+void Read_clock_genrtrs(CLOCK_GENERATORS clk_gen, clock_gen_info *info);
 
 #endif

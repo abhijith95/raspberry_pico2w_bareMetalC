@@ -37,7 +37,7 @@ typedef enum
     SPI0_RX,
     UART0_TX,
     I2C0_SDA,
-    PWM_A_0,
+    PWM_0,
     SIO_0,
     PIO0_0,
     PIO1_0,

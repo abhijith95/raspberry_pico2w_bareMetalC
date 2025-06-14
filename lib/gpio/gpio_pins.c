@@ -78,6 +78,8 @@ void Config_gpio_pin(uint8_t pin, GPIO_FUNCTIONS_E pin_function)
     {
         /* Don't take any action */
     }
+    /* Setup the GPIO Pads */
+    gpio_pads_regs->gpio_pins[pin] = 0;
 }
 
 /**
@@ -88,7 +90,6 @@ void Config_gpio_pin(uint8_t pin, GPIO_FUNCTIONS_E pin_function)
  */
 void Config_gpio_sio(uint8_t pin, GPIO_SIO_TYPE_E sio_type)
 {
-    gpio_pads_regs->gpio_pins[pin] = 0;
     if (pin < LOW_REG_MAX_PINS)
     {
         *(GPIO_OE_SET) = ((uint32_t)sio_type << pin);

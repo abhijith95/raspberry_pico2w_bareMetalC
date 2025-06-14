@@ -2,6 +2,7 @@
 #include "timer.h"
 #include "blinkLed.h"
 #include "gpio_pins.h"
+#include "smoothLed.h"
 
 #define SYSTEM_TIMER    TIMER0_SYS_TIMER
 
@@ -66,7 +67,8 @@ void setup()
     clock_tick_setup();
     
     /* Application setup */
-    blinkLed_setup();
+    // blinkLed_setup();
+    smoothled_setup();
 }
 
 /**
@@ -85,7 +87,8 @@ int main()
         if(system_time >= APPL_CYCLE_TIME_US)
         {
             /* Call the application main function */
-            blinkLed_10ms();
+            // blinkLed_10ms();
+            smoothled_10ms();
             Reset_sys_timer(SYSTEM_TIMER);
         }
         else
